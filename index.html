@@ -3,14 +3,123 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Rock Paper Scissors</title>
+    <style>
+      .results {
+        margin-top: 20px;
+      }
+    </style>
   </head>
   <body>
+    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Cupiditate
+    repellat accusantium ea asperiores expedita numquam corrupti culpa quo
+    placeat magni.
     <h1>Rock Paper Scissors</h1>
-    Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet nobis a
-    voluptatibus expedita tempore, unde corrupti consequuntur itaque blanditiis,
-    quidem numquam illum recusandae! Tempore, eligendi repellat. Numquam
+    <div id="game">
+      <button class="choice">Rock</button>
+      <button class="choice">Paper</button>
+      <button class="choice">Scissors</button>
+      <button id="reset">Reset</button>
+    </div>
+    <div id="results" class="results"></div>
 
-    <script src="index.js"></script>
+    <script>
+      function getComputerChoice() {
+        const choices = ["rock", "paper", "scissors"];
+        const randomIndex = Math.floor(Math.random() * choices.length);
+        return choices[randomIndex];
+      }
+
+      function playRound(playerSelection, computerSelection) {
+        const winConditions = {
+          rock: "scissors",
+          paper: "rock",
+          scissors: "paper",
+        };
+
+        if (playerSelection === computerSelection) {
+          return "It's a tie";
+        } else if (winConditions[playerSelection] === computerSelection) {
+          return `You Win! ${playerSelection} beats ${computerSelection}`;
+        } else {
+          return `You Lose! ${computerSelection} beats ${playerSelection}`;
+        }
+      }
+
+      function updateResults(result) {
+        const resultsDiv = document.getElementById("results");
+        resultsDiv.textContent = result;
+      }
+
+      function updateScore(playerScore, computerScore) {
+        const resultsDiv = document.getElementById("results");
+        resultsDiv.innerHTML += `<br>Player Score: ${playerScore}, Computer Score: ${computerScore}`;
+      }
+
+      function announceWinner(playerScore, computerScore) {
+        const resultsDiv = document.getElementById("results");
+        if (playerScore > computerScore) {
+          resultsDiv.innerHTML += "<br>Congratulations! You win the game.";
+        } else if (computerScore > playerScore) {
+          resultsDiv.innerHTML += "<br>Computer wins the game.";
+        } else {
+          resultsDiv.innerHTML += "<br>It's a tie.";
+        }
+      }
+
+      function resetGame() {
+        const resultsDiv = document.getElementById("results");
+        resultsDiv.textContent = "";
+      }
+
+      function playGame() {
+        let playerScore = 0;
+        let computerScore = 0;
+        let roundsPlayed = 0;
+        const buttons = document.querySelectorAll(".choice");
+
+        buttons.forEach((button) => {
+          button.addEventListener("click", function playRoundHandler() {
+            const playerSelection = button.textContent.toLowerCase();
+            const computerSelection = getComputerChoice();
+            const result = playRound(playerSelection, computerSelection);
+            updateResults(result);
+
+            if (result.includes("Win")) {
+              playerScore++;
+            } else if (result.includes("Lose")) {
+              computerScore++;
+            }
+
+            updateScore(playerScore, computerScore);
+
+            roundsPlayed++;
+
+            if (roundsPlayed === 3) {
+              announceWinner(playerScore, computerScore);
+              // Disable buttons after game ends
+              buttons.forEach((button) => {
+                button.disabled = true;
+              });
+            }
+          });
+        });
+
+        // Reset button functionality
+        const resetButton = document.getElementById("reset");
+        resetButton.addEventListener("click", function () {
+          playerScore = 0;
+          computerScore = 0;
+          roundsPlayed = 0;
+          resetGame();
+          // Enable buttons
+          buttons.forEach((button) => {
+            button.disabled = false;
+          });
+        });
+      }
+
+      playGame();
+    </script>
   </body>
 </html>
